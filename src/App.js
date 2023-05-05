@@ -110,6 +110,7 @@ function App() {
                 aria-label="Amount (to the nearest dollar)"
                 value={renewalValue}
                 onChange={(e) => setRenewalValue(e.target.value)}
+                step="0.01"
               />
             </div>
             <div className="col input-group mb-3 expiring">
@@ -121,6 +122,7 @@ function App() {
                 aria-label="Amount (to the nearest dollar)"
                 value={expiringValue}
                 onChange={(e) => setExpiringValue(e.target.value)}
+                step="0.01"
               />
             </div>
           </div>
