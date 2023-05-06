@@ -54,21 +54,23 @@ function App() {
   ) => {
     let message = "";
     let absPercentageChange = Math.abs(percentageChange);
-    let percentChange = (percentageChange * 100).toFixed(0);
+    let percentChange = (percentageChange * 100).toFixed(
+      percentageChange >= 0.095 && percentageChange < 0.1 ? 1 : 0
+    );
 
     if (absPercentageChange < 0.01) {
-      message = `Per DL FT$${renewalValue} (was $${expiringValue}) <1% ${
+      message = `Per DL FT$${renewalValue.toLocaleString()} (was $${expiringValue.toLocaleString()}) <1% ${
         premChange > 0 ? "increase" : "decrease"
       }`;
       setPremChangeOver(false);
     } else if (percentageChange < 0.1) {
-      message = `Per DL FT$${renewalValue} (was $${expiringValue}) approx ${Math.abs(
+      message = `Per DL FT$${renewalValue.toLocaleString()} (was $${expiringValue.toLocaleString()}) approx ${Math.abs(
         percentChange
       )}% ${premChange > 0 ? "increase" : "decrease"}`;
       setPremChangeOver(false);
     } else {
       if (premChange < 100) {
-        message = `Per DL FT$${renewalValue} (was $${expiringValue}) approx ${percentChange}% increase. Within our $100 threshold`;
+        message = `Per DL FT$${renewalValue.toLocaleString()} (was $${expiringValue.toLocaleString()}) approx ${percentChange}% increase. Within our $100 threshold`;
         setPremChangeOver(false);
       } else {
         message = "ren.prem.over.threshold";
@@ -134,7 +136,7 @@ function App() {
       <div className="container text-center">
         <div className="row">
           <div className={`col prem-change ${premChangeOver ? "over" : ""}`}>
-            {premChange !== "" && `$${premChange}`}
+            {premChange !== "" && `$${premChange.toLocaleString()}`}
           </div>
           <div className="col percentage-change">
             {percentageChange !== "" &&
