@@ -52,6 +52,11 @@ function App() {
     renewalValue,
     expiringValue
   ) => {
+    if (renewalValue === expiringValue) {
+      setMessage(`Per DL FT$${renewalValue.toLocaleString()} (was same)`);
+      return;
+    }
+
     let message = "";
     let absPercentageChange = Math.abs(percentageChange);
     let percentChange = (percentageChange * 100).toFixed(
