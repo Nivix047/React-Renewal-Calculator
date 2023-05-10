@@ -46,24 +46,23 @@ function App() {
   };
 
   // Generates the message to be displayed based on the calculated values
+  // Generates the message to be displayed based on the calculated values
   const generateMessage = (
     premChange,
     percentageChange,
     renewalValue,
     expiringValue
   ) => {
-    if (renewalValue === expiringValue) {
-      setMessage(`Per DL FT$${renewalValue.toLocaleString()} (was same)`);
-      return;
-    }
-
     let message = "";
     let absPercentageChange = Math.abs(percentageChange);
     let percentChange = (percentageChange * 100).toFixed(
       percentageChange >= 0.095 && percentageChange < 0.1 ? 1 : 0
     );
 
-    if (absPercentageChange < 0.01) {
+    if (parseFloat(renewalValue) === parseFloat(expiringValue)) {
+      message = `Per DL FT$${renewalValue.toLocaleString()} (was same)`;
+      setPremChangeOver(false);
+    } else if (absPercentageChange < 0.01) {
       message = `Per DL FT$${renewalValue.toLocaleString()} (was $${expiringValue.toLocaleString()}) <1% ${
         premChange > 0 ? "increase" : "decrease"
       }`;
