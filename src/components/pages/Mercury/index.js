@@ -4,8 +4,6 @@ import "../../../App.css";
 const Mercury = () => {
   const [renewalValue, setRenewalValue] = useState("");
   const [expiringValue, setExpiringValue] = useState("");
-  const [premChange, setPremChange] = useState("");
-  const [percentageChange, setPercentageChange] = useState("");
   const [message, setMessage] = useState("");
 
   const handleSubmit = (event) => {
@@ -26,8 +24,6 @@ const Mercury = () => {
   const resetValues = () => {
     setRenewalValue("");
     setExpiringValue("");
-    setPremChange("");
-    setPercentageChange("");
     setMessage("");
   };
 
@@ -37,8 +33,6 @@ const Mercury = () => {
     let change = renewalNum - expiringNum;
     let percentChange = (change / expiringNum) * 100;
 
-    setPremChange(change.toFixed(2));
-    setPercentageChange(percentChange.toFixed(2));
     generateMessage(renewalNum, expiringNum, percentChange);
   };
 
@@ -46,7 +40,7 @@ const Mercury = () => {
   const generateMessage = (renewalNum, expiringNum, percentChange) => {
     let message = `Per DL FT$${renewalNum.toLocaleString()} (was $${expiringNum.toLocaleString()}) approx ${Math.abs(
       percentChange.toFixed(2)
-    )}%`;
+    )}%. MIC rate increase eff:02/25/24. Emailed and diaried`;
     setMessage(message);
     copyToClipboard(message);
   };

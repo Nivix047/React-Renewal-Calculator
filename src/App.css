@@ -7,3 +7,7 @@
 .over {
   color: red;
 }
+
+.nav-link.active {
+  text-decoration: underline;
+}
