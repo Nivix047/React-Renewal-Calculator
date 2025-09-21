@@ -35,6 +35,15 @@ const Navbar = () => {
                 Rate Increase
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink
+                className="nav-link"
+                to="/email-subject"
+                activeClassName="active"
+              >
+                Email subject
+              </NavLink>
+            </li>
           </ul>
         </div>
       </div>
