@@ -30,7 +30,7 @@ const fmtMMDDYY = (iso) => {
   ).padStart(2, "0")}/${String(d.getFullYear()).slice(-2)}`;
 };
 
-const Mercury = () => {
+const RateIncrease = () => {
   const [renewalValue, setRenewalValue] = useState("");
   const [expiringValue, setExpiringValue] = useState("");
   const [covARenewal, setCovARenewal] = useState("");
@@ -262,7 +262,7 @@ const Mercury = () => {
   );
 };
 
-export default Mercury;
+export default RateIncrease;
 
 // import React, { useState } from "react";
 // import "../../../App.css";

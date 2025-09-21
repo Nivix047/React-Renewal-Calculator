@@ -1,17 +1,16 @@
 import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "../Navbar";
-import Home from "../pages/Home";
-import Mercury from "../pages/Mercury";
-
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import RateCalculator from "../pages/RateCalculator";
+import RateIncrease from "../pages/RateIncrease";
 
 export default function Layout() {
   return (
-    <Router basename="React-Renewal-Calculator">
+    <Router basename="/React-Renewal-Calculator">
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/mercury" element={<Mercury />} />
+        <Route path="/" element={<RateCalculator />} />
+        <Route path="/rate-increase" element={<RateIncrease />} />
       </Routes>
     </Router>
   );

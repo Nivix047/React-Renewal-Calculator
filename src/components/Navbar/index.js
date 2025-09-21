@@ -23,16 +23,16 @@ const Navbar = () => {
           <ul className="navbar-nav">
             <li className="nav-item">
               <NavLink className="nav-link" to="/" end activeClassName="active">
-                Home
+                Rate Calculator
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink
                 className="nav-link"
-                to="/mercury"
+                to="/rate-increase"
                 activeClassName="active"
               >
-                Mercury
+                Rate Increase
               </NavLink>
             </li>
           </ul>

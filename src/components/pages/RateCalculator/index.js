@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../../../App.css";
 
-const Home = () => {
+const RateCalculator = () => {
   const [renewalValue, setRenewalValue] = useState("");
   const [expiringValue, setExpiringValue] = useState("");
   const [premChange, setPremChange] = useState("");
@@ -153,4 +153,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default RateCalculator;
