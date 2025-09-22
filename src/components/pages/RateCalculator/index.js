@@ -134,7 +134,7 @@ const RateCalculator = () => {
           </div>
         </div>
         <button type="submit" className="btn btn-primary mx-auto d-block">
-          Submit
+          Generate and copy
         </button>
       </form>
       <div className="container text-center">

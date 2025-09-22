@@ -235,7 +235,7 @@ const RateIncrease = () => {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Rate company (e.g., MIC, DHX)"
+                placeholder="Rate company (e.g., MIC, SAI)"
                 value={rateCompany}
                 onChange={(e) => setRateCompany(e.target.value)}
               />
