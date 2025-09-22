@@ -33,15 +33,20 @@ const fmtMMDDYY = (iso) => {
 const RateIncrease = () => {
   const [renewalValue, setRenewalValue] = useState("");
   const [expiringValue, setExpiringValue] = useState("");
+
   const [covARenewal, setCovARenewal] = useState("");
   const [covAExpiring, setCovAExpiring] = useState("");
+
+  // NEW: Deductible
+  const [deductible, setDeductible] = useState("");
+
   const [yearBuilt, setYearBuilt] = useState("");
   const [squareFeet, setSquareFeet] = useState("");
 
-  // NEW: Insurance company name for the rate line (the "X")
+  // Insurance company name for the rate line
   const [rateCompany, setRateCompany] = useState("");
 
-  // Effective date (kept as a date input; shown as MM/DD/YY)
+  // Effective date (prints as MM/DD/YY)
   const [rateEffDate, setRateEffDate] = useState("");
 
   const [emailedWho, setEmailedWho] = useState("");
@@ -52,6 +57,7 @@ const RateIncrease = () => {
     setExpiringValue("");
     setCovARenewal("");
     setCovAExpiring("");
+    setDeductible("");
     setYearBuilt("");
     setSquareFeet("");
     setRateCompany("");
@@ -67,12 +73,13 @@ const RateIncrease = () => {
     const exp = parseFloat(expiringValue);
     const covRen = parseFloat(covARenewal);
     const covExp = parseFloat(covAExpiring);
+    const ded = parseFloat(deductible);
     const sqft = parseInt(squareFeet, 10);
     const yr = parseInt(yearBuilt, 10);
 
     const segments = [];
 
-    // Per DL FT
+    // 1) Per DL FT
     if (Number.isFinite(ren) && Number.isFinite(exp)) {
       const perPct = pctChange(ren, exp);
       segments.push(
@@ -82,7 +89,7 @@ const RateIncrease = () => {
       );
     }
 
-    // Coverage A
+    // 2) Coverage A
     let covPct = NaN;
     if (Number.isFinite(covRen) && Number.isFinite(covExp)) {
       covPct = pctChange(covRen, covExp);
@@ -93,27 +100,35 @@ const RateIncrease = () => {
       );
     }
 
-    // Home facts
+    // 3) $X deductible.
+    if (Number.isFinite(ded)) {
+      segments.push(`${fmtMoney0(ded)} deductible.`);
+    }
+
+    // 4) Home built in YEAR.
     if (Number.isFinite(yr)) segments.push(`Home built in ${yr}.`);
+
+    // 5) X square ft.
     if (Number.isFinite(sqft))
       segments.push(`${sqft.toLocaleString()} square ft.`);
 
-    // Auto-calculated rate change (prefers Coverage A %; else Per DL FT)
-    let ratePct = Number.isFinite(covPct) ? covPct : pctChange(ren, exp);
-    if (Number.isFinite(ratePct) || rateEffDate) {
+    // 6) COMPANY rate increase/decrease eff:MM/DD/YY.
+    const haveRateMeta = rateCompany.trim() || rateEffDate;
+    if (haveRateMeta) {
+      let ratePct = Number.isFinite(covPct) ? covPct : pctChange(ren, exp);
       const word = Number.isFinite(ratePct)
         ? ratePct >= 0
           ? "rate increase"
           : "rate decrease"
         : "Rate change";
-      const companyPart = rateCompany.trim() ? `${rateCompany.trim()} ` : "";
-      const pctStr = `${companyPart}${word}`;
 
+      const companyPart = rateCompany.trim() ? `${rateCompany.trim()} ` : "";
       const eff = rateEffDate ? ` eff:${fmtMMDDYY(rateEffDate)}` : "";
-      segments.push(`${pctStr}${eff}.`);
+
+      segments.push(`${companyPart}${word}${eff}.`);
     }
 
-    // Emailed who
+    // 7) Emailed X.
     if (emailedWho.trim()) segments.push(`Emailed ${emailedWho.trim()}.`);
 
     if (!segments.length) {
@@ -178,6 +193,20 @@ const RateIncrease = () => {
             </div>
           </div>
 
+          {/* Deductible */}
+          <div className="row">
+            <div className="col input-group mb-3">
+              <span className="input-group-text">$</span>
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Deductible"
+                value={deductible}
+                onChange={(e) => setDeductible(e.target.value)}
+              />
+            </div>
+          </div>
+
           {/* Home details */}
           <div className="row">
             <div className="col mb-3">
@@ -200,7 +229,7 @@ const RateIncrease = () => {
             </div>
           </div>
 
-          {/* NEW: Rate company (appears between % and 'rate increase/decrease') */}
+          {/* Rate company */}
           <div className="row">
             <div className="col mb-3">
               <input
@@ -213,7 +242,7 @@ const RateIncrease = () => {
             </div>
           </div>
 
-          {/* Effective date (date input; will print as MM/DD/YY) */}
+          {/* Effective date (prints as MM/DD/YY) */}
           <div className="row">
             <div className="col mb-3">
               <input
@@ -263,107 +292,3 @@ const RateIncrease = () => {
 };
 
 export default RateIncrease;
-
-// import React, { useState } from "react";
-// import "../../../App.css";
-
-// const Mercury = () => {
-//   const [renewalValue, setRenewalValue] = useState("");
-//   const [expiringValue, setExpiringValue] = useState("");
-//   const [message, setMessage] = useState("");
-
-//   const handleSubmit = (event) => {
-//     event.preventDefault();
-//     if (
-//       !isNaN(renewalValue) &&
-//       !isNaN(expiringValue) &&
-//       renewalValue !== "" &&
-//       expiringValue !== ""
-//     ) {
-//       renewalCalc(renewalValue, expiringValue);
-//     } else {
-//       alert("Please enter valid numbers for both fields.");
-//       resetValues();
-//     }
-//   };
-
-//   const resetValues = () => {
-//     setRenewalValue("");
-//     setExpiringValue("");
-//     setMessage("");
-//   };
-
-//   const renewalCalc = (renewal, expiring) => {
-//     let renewalNum = parseFloat(renewal);
-//     let expiringNum = parseFloat(expiring);
-//     let change = renewalNum - expiringNum;
-//     let percentChange = (change / expiringNum) * 100;
-
-//     generateMessage(renewalNum, expiringNum, percentChange);
-//   };
-
-//   // Simplified to directly set the message as specified
-//   const generateMessage = (renewalNum, expiringNum, percentChange) => {
-//     let message = `Per DL FT$${renewalNum.toLocaleString()} (was $${expiringNum.toLocaleString()}) approx ${Math.abs(
-//       percentChange.toFixed(2)
-//     )}%. MIC rate increase eff:02/25/24. Emailed and diaried`;
-//     setMessage(message);
-//     copyToClipboard(message);
-//   };
-
-//   const copyToClipboard = (message) => {
-//     if (navigator.clipboard) {
-//       navigator.clipboard.writeText(message).then(
-//         () => console.log("Copied to clipboard"),
-//         () => console.error("Unable to copy to clipboard")
-//       );
-//     } else {
-//       console.error("Clipboard API not supported");
-//     }
-//   };
-
-//   return (
-//     <div className="App">
-//       <form onSubmit={handleSubmit}>
-//         <div className="container text-center">
-//           <div className="row">
-//             <div className="col input-group mb-3 renewing">
-//               <span className="input-group-text">$</span>
-//               <input
-//                 type="number"
-//                 className="form-control"
-//                 placeholder="Renewing premium"
-//                 aria-label="Amount (to the nearest dollar)"
-//                 value={renewalValue}
-//                 onChange={(e) => setRenewalValue(e.target.value)}
-//                 step="0.01"
-//               />
-//             </div>
-//             <div className="col input-group mb-3 expiring">
-//               <span className="input-group-text">$</span>
-//               <input
-//                 type="number"
-//                 className="form-control"
-//                 placeholder="Expiring premium"
-//                 aria-label="Amount (to the nearest dollar)"
-//                 value={expiringValue}
-//                 onChange={(e) => setExpiringValue(e.target.value)}
-//                 step="0.01"
-//               />
-//             </div>
-//           </div>
-//         </div>
-//         <button type="submit" className="btn btn-primary mx-auto d-block">
-//           Submit
-//         </button>
-//       </form>
-//       <div className="container text-center">
-//         <div className="row">
-//           <div className="col">{message}</div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Mercury;
