@@ -1,17 +1,15 @@
 import React, { useState } from "react";
 import "../../../App.css";
 
-const fmtMoney0 = (n) =>
-  new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(n);
+// Format money as $1234.56 (always 2 decimal places, no currency code)
+const fmtMoney = (n) =>
+  `$${Number(n).toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
 
 const fmtPercent = (fraction) =>
-  `${
-    Number.isFinite(fraction) ? Math.abs(fraction * 100).toFixed(2) : "0.00"
-  }%`;
+  `${Number.isFinite(fraction) ? (fraction * 100).toFixed(2) : "0.00"}%`;
 
 const incDecWord = (newVal, oldVal) =>
   newVal >= oldVal ? "increase" : "decrease";
@@ -33,22 +31,13 @@ const fmtMMDDYY = (iso) => {
 const RateIncrease = () => {
   const [renewalValue, setRenewalValue] = useState("");
   const [expiringValue, setExpiringValue] = useState("");
-
   const [covARenewal, setCovARenewal] = useState("");
   const [covAExpiring, setCovAExpiring] = useState("");
-
-  // NEW: Deductible
   const [deductible, setDeductible] = useState("");
-
   const [yearBuilt, setYearBuilt] = useState("");
   const [squareFeet, setSquareFeet] = useState("");
-
-  // Insurance company name for the rate line
   const [rateCompany, setRateCompany] = useState("");
-
-  // Effective date (prints as MM/DD/YY)
   const [rateEffDate, setRateEffDate] = useState("");
-
   const [emailedWho, setEmailedWho] = useState("");
   const [message, setMessage] = useState("");
 
@@ -74,45 +63,45 @@ const RateIncrease = () => {
     const covRen = parseFloat(covARenewal);
     const covExp = parseFloat(covAExpiring);
     const ded = parseFloat(deductible);
-    const sqft = parseInt(squareFeet, 10);
+    const sqft = parseFloat(squareFeet);
     const yr = parseInt(yearBuilt, 10);
 
     const segments = [];
 
-    // 1) Per DL FT
+    // Per DL FT
     if (Number.isFinite(ren) && Number.isFinite(exp)) {
       const perPct = pctChange(ren, exp);
       segments.push(
-        `Per DL FT ${fmtMoney0(ren)} (was ${fmtMoney0(
-          exp
-        )}) approx ${fmtPercent(perPct)} ${incDecWord(ren, exp)}.`
+        `Per DL FT ${fmtMoney(ren)} (was ${fmtMoney(exp)}) approx ${fmtPercent(
+          perPct
+        )} ${incDecWord(ren, exp)}.`
       );
     }
 
-    // 2) Coverage A
+    // Coverage A
     let covPct = NaN;
     if (Number.isFinite(covRen) && Number.isFinite(covExp)) {
       covPct = pctChange(covRen, covExp);
       segments.push(
-        `Cov.A at ${fmtMoney0(covRen)} (was ${fmtMoney0(covExp)}) ${fmtPercent(
+        `Cov.A at ${fmtMoney(covRen)} (was ${fmtMoney(covExp)}) ${fmtPercent(
           covPct
         )} ${incDecWord(covRen, covExp)}.`
       );
     }
 
-    // 3) $X deductible.
+    // Deductible
     if (Number.isFinite(ded)) {
-      segments.push(`${fmtMoney0(ded)} deductible.`);
+      segments.push(`${fmtMoney(ded)} deductible.`);
     }
 
-    // 4) Home built in YEAR.
+    // Home built
     if (Number.isFinite(yr)) segments.push(`Home built in ${yr}.`);
 
-    // 5) X square ft.
+    // Square feet
     if (Number.isFinite(sqft))
       segments.push(`${sqft.toLocaleString()} square ft.`);
 
-    // 6) COMPANY rate increase/decrease eff:MM/DD/YY.
+    // Rate company + effective date
     const haveRateMeta = rateCompany.trim() || rateEffDate;
     if (haveRateMeta) {
       let ratePct = Number.isFinite(covPct) ? covPct : pctChange(ren, exp);
@@ -121,14 +110,12 @@ const RateIncrease = () => {
           ? "rate increase"
           : "rate decrease"
         : "Rate change";
-
       const companyPart = rateCompany.trim() ? `${rateCompany.trim()} ` : "";
       const eff = rateEffDate ? ` eff:${fmtMMDDYY(rateEffDate)}` : "";
-
       segments.push(`${companyPart}${word}${eff}.`);
     }
 
-    // 7) Emailed X.
+    // Emailed
     if (emailedWho.trim()) segments.push(`Emailed ${emailedWho.trim()}.`);
 
     if (!segments.length) {
@@ -145,12 +132,13 @@ const RateIncrease = () => {
     <div className="App">
       <form onSubmit={handleSubmit}>
         <div className="container text-center">
-          {/* Per DL FT */}
+          {/* Renewing / Expiring premiums */}
           <div className="row">
             <div className="col input-group mb-3">
               <span className="input-group-text">$</span>
               <input
                 type="number"
+                step="0.01"
                 className="form-control"
                 placeholder="Renewing premium"
                 value={renewalValue}
@@ -161,6 +149,7 @@ const RateIncrease = () => {
               <span className="input-group-text">$</span>
               <input
                 type="number"
+                step="0.01"
                 className="form-control"
                 placeholder="Expiring premium"
                 value={expiringValue}
@@ -175,6 +164,7 @@ const RateIncrease = () => {
               <span className="input-group-text">$</span>
               <input
                 type="number"
+                step="0.01"
                 className="form-control"
                 placeholder="Coverage A (renewing)"
                 value={covARenewal}
@@ -185,6 +175,7 @@ const RateIncrease = () => {
               <span className="input-group-text">$</span>
               <input
                 type="number"
+                step="0.01"
                 className="form-control"
                 placeholder="Coverage A (expiring)"
                 value={covAExpiring}
@@ -199,6 +190,7 @@ const RateIncrease = () => {
               <span className="input-group-text">$</span>
               <input
                 type="number"
+                step="0.01"
                 className="form-control"
                 placeholder="Deductible"
                 value={deductible}
@@ -207,7 +199,7 @@ const RateIncrease = () => {
             </div>
           </div>
 
-          {/* Home details */}
+          {/* Year built and Square feet */}
           <div className="row">
             <div className="col mb-3">
               <input
@@ -242,7 +234,7 @@ const RateIncrease = () => {
             </div>
           </div>
 
-          {/* Effective date (prints as MM/DD/YY) */}
+          {/* Effective date */}
           <div className="row">
             <div className="col mb-3">
               <input
